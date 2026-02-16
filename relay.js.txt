@@ -1,0 +1,39 @@
+const dgram = require('dgram');
+const server = dgram.createSocket('udp4');
+
+let androidAddr = null;
+let androidPort = null;
+
+
+const PORT = 1234;
+
+server.on('error', (err) => {
+  console.log(`Server error:\n${err.stack}`);
+  server.close();
+});
+
+server.on('message', (msg, rinfo) => {
+  const dataString = msg.toString();
+
+  if (dataString === "ANDROID_READY") {
+    androidAddr = rinfo.address;
+    androidPort = rinfo.port;
+    console.log(`Android Connected: ${androidAddr}:${androidPort}`);
+    return;
+  }
+
+ 
+  if (androidAddr && androidPort) {
+    
+    server.send(msg, 0, msg.length, androidPort, androidAddr, (err) => {
+      if (err) console.log('Send error:', err);
+    });
+  }
+});
+
+server.on('listening', () => {
+  const address = server.address();
+  console.log(`Relay Server listening on ${address.address}:${address.port}`);
+});
+
+server.bind(PORT);
