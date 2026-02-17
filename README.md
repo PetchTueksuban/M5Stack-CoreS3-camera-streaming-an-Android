@@ -1,5 +1,5 @@
 # M5Stack-CoreS3-camera-streaming-an-Android
-This project features a high-performance UDP video streaming system. It transmits raw GC0308 camera data (320x240 RGB565) from an M5Stack CoreS3 to an Android app via a Node.js relay . Optimized with bitwise color conversion , WiFi Turbo Mode , and frame synchronization  to ensure ultra-low latency. !!!!still on develop!!!!
+This project features a high-performance UDP video streaming system. It transmits raw GC0308 camera data (320x240 RGB565) from an M5Stack CoreS3 to an Android app via a Node.js relay . Optimized with bitwise color conversion , WiFi Turbo Mode , and frame synchronization  to ensure ultra-low latency.
 
 
 🚀 M5Stack CoreS3 to Android UDP Streaming
@@ -24,3 +24,41 @@ Packet Syncing: Uses a unique 3-byte header (0xAA, 0xBB, 0xCC) to ensure the rec
 Relay: Deploy relay.js to your DigitalOcean droplet and ensure port 1234 is open.
 M5Stack: Update dropletIP with your server address and flash the firmware.
 Android: Open the project in Android Studio, update the serverAddr, and run the app.
+
+Cloud Setup Guide (DigitalOcean & UDP Relay)
+
+# Installation Steps
+**1. Execute these commands to set up the Node.js environment:**
+
+```bash
+sudo apt update
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
+**2. Firewall Setup**  
+Run these commands to allow UDP traffic for the relay:
+
+```bash
+sudo ufw allow 1234/udp
+sudo ufw enable
+```
+**3. Running the Relay Server**  
+Use the relay.js file provided in the project folder:
+
+**Create or edit the relay file**
+```bash
+nano relay.js
+```
+
+**Start the relay server**
+```bash
+node relay.js
+```
+**4. Troubleshooting**  
+Port Conflict (EADDRINUSE): Occurs if another process is already using the port. Resolve by killing existing node processes:
+
+```bash
+sudo pkill -9 node
+```
+**Connection Timeout:**  
+Ensure the dropletIP in the M5Stack code and Android app matches your server's public IP.
